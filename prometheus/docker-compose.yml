@@ -37,6 +37,23 @@ services:
 #        constraints:
 #          - node.hostname == ${HOSTNAME}
 
+  alertmanager-bot:
+        command:
+        - --alertmanager.url=http://alertmanager:9093
+        - --log.level=info
+        - --store=bolt
+        - --bolt.path=/data/bot.db
+        environment:
+          TELEGRAM_ADMIN: ${TELEGRAMM_ID}
+          TELEGRAM_TOKEN: ${TOKENBOT_ID}
+        image: metalmatze/alertmanager-bot:0.4.3
+        ports:
+        - 127.0.0.1:8080:8080
+        restart: always
+        volumes:
+        - ./data:/data
+
+
   node-exporter:
     image: quay.io/prometheus/node-exporter:latest
     volumes:
@@ -109,7 +126,7 @@ services:
   blackbox-exporter:
     image: prom/blackbox-exporter
     ports:
-      - 127.0.0.1:9115:9115
+      - 9115:9115
     restart: always
     volumes:
       - ./blackbox:/config
